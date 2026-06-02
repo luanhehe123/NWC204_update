@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNA Quiz – Networking Fundamentals (150Q)</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --green: #39d353;
+    --green-dim: #1a6b2a;
+    --cyan: #58e0c8;
+    --red: #f85149;
+    --yellow: #e3b341;
+    --text: #e6edf3;
+    --text-dim: #7d8590;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 24px 20px 60px; position: relative; z-index: 1; }
+  header { text-align: center; padding: 32px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .badge {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--green);
+    border: 1px solid var(--green-dim);
+    background: rgba(57,211,83,0.08);
+    padding: 3px 10px; border-radius: 2px;
+    letter-spacing: 2px; margin-bottom: 14px;
+  }
+  header h1 { font-family: 'Rajdhani', sans-serif; font-size: clamp(28px,5vw,44px); font-weight: 700; letter-spacing: 1px; line-height: 1.1; }
+  header h1 span { color: var(--green); }
+  header p { color: var(--text-dim); font-size: 14px; margin-top: 8px; font-weight: 300; }
+  #start-screen { text-align: center; padding: 20px 0; }
+  .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 28px 0 36px; text-align: left; }
+  .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; font-size: 13px; transition: border-color 0.2s; }
+  .module-card:hover { border-color: var(--green-dim); }
+  .module-card .mod-num { font-family: 'Share Tech Mono', monospace; color: var(--green); font-size: 11px; letter-spacing: 1px; margin-bottom: 4px; }
+  .module-card .mod-title { font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 15px; color: var(--text); }
+  .start-btn {
+    background: var(--green); color: #0d1117; border: none;
+    padding: 14px 48px; font-family: 'Rajdhani', sans-serif;
+    font-size: 18px; font-weight: 700; letter-spacing: 2px;
+    border-radius: 4px; cursor: pointer; text-transform: uppercase;
+    transition: all 0.2s; box-shadow: 0 0 24px rgba(57,211,83,0.25);
+  }
+  .start-btn:hover { background: #4cde66; box-shadow: 0 0 40px rgba(57,211,83,0.4); transform: translateY(-1px); }
+  #quiz-screen { display: none; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
+  .progress-wrap { flex: 1; min-width: 180px; }
+  .progress-label { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); border-radius: 3px; transition: width 0.5s ease; box-shadow: 0 0 8px rgba(57,211,83,0.5); }
+  .score-badge { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--cyan); background: rgba(88,224,200,0.08); border: 1px solid rgba(88,224,200,0.2); padding: 6px 14px; border-radius: 4px; white-space: nowrap; }
+  .q-module-tag { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--green); background: rgba(57,211,83,0.08); border: 1px solid var(--green-dim); padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; display: inline-block; margin-bottom: 12px; }
+  .question-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px 28px 24px; margin-bottom: 20px; animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .q-number { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; letter-spacing: 1px; }
+  .q-text { font-size: 17px; font-weight: 400; line-height: 1.6; color: var(--text); margin-bottom: 22px; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 13px 18px; color: var(--text); font-family: 'Exo 2', sans-serif; font-size: 15px; text-align: left; cursor: pointer; transition: all 0.18s; display: flex; align-items: flex-start; gap: 12px; }
+  .option-btn:hover:not(:disabled) { border-color: var(--green-dim); background: rgba(57,211,83,0.06); }
+  .option-btn .opt-key { font-family: 'Share Tech Mono', monospace; color: var(--text-dim); font-size: 12px; min-width: 22px; margin-top: 2px; flex-shrink: 0; }
+  .option-btn.correct { border-color: var(--green) !important; background: rgba(57,211,83,0.12) !important; color: var(--green); }
+  .option-btn.correct .opt-key { color: var(--green); }
+  .option-btn.wrong { border-color: var(--red) !important; background: rgba(248,81,73,0.1) !important; color: var(--red); }
+  .option-btn.wrong .opt-key { color: var(--red); }
+  .option-btn:disabled { cursor: default; }
+  .explanation { display: none; margin-top: 16px; padding: 14px 18px; background: rgba(88,224,200,0.06); border-left: 3px solid var(--cyan); border-radius: 0 4px 4px 0; font-size: 14px; color: var(--text-dim); line-height: 1.6; animation: fadeIn 0.3s ease; }
+  .explanation.show { display: block; }
+  .explanation strong { color: var(--cyan); }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .next-btn { display: none; width: 100%; margin-top: 16px; background: transparent; border: 1px solid var(--green); color: var(--green); padding: 13px; font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+  .next-btn:hover { background: rgba(57,211,83,0.1); box-shadow: 0 0 16px rgba(57,211,83,0.2); }
+  .next-btn.show { display: block; }
+  #result-screen { display: none; text-align: center; padding: 20px 0; animation: fadeIn 0.5s ease; }
+  .result-circle { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--green); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 24px; background: rgba(57,211,83,0.06); box-shadow: 0 0 40px rgba(57,211,83,0.2); }
+  .result-score { font-family: 'Rajdhani', sans-serif; font-size: 42px; font-weight: 700; color: var(--green); line-height: 1; }
+  .result-total { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .result-title { font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .result-msg { color: var(--text-dim); font-size: 15px; margin-bottom: 28px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 auto 32px; max-width: 480px; }
+  .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px 10px; }
+  .stat-val { font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; }
+  .stat-val.g { color: var(--green); } .stat-val.r { color: var(--red); } .stat-val.y { color: var(--yellow); }
+  .stat-lbl { font-size: 12px; color: var(--text-dim); margin-top: 2px; font-family: 'Share Tech Mono', monospace; }
+  .module-results { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 0 auto 28px; max-width: 560px; text-align: left; }
+  .module-results h3 { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 14px; text-transform: uppercase; }
+  .mod-result-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+  .mod-result-row .mod-name { flex: 1; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 600; }
+  .mod-result-row .mod-bar-wrap { width: 120px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .mod-result-row .mod-bar-fill { height: 100%; border-radius: 3px; background: var(--green); transition: width 0.8s ease; }
+  .mod-result-row .mod-pct { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); min-width: 36px; text-align: right; }
+  .retry-btn { background: var(--green); color: #0d1117; border: none; padding: 14px 48px; font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 2px; border-radius: 4px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; box-shadow: 0 0 24px rgba(57,211,83,0.25); }
+  .retry-btn:hover { background: #4cde66; box-shadow: 0 0 40px rgba(57,211,83,0.4); transform: translateY(-1px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge">CISCO CCNA ITN</div>
+    <h1>NETWORKING<br><span>FUNDAMENTALS QUIZ</span></h1>
+    <p>150 Questions · 7 Modules · Full Knowledge Assessment</p>
+  </header>
+
+  <div id="start-screen">
+    <div class="modules-grid">
+      <div class="module-card"><div class="mod-num">MODULE 01</div><div class="mod-title">Networking Today</div></div>
+      <div class="module-card"><div class="mod-num">MODULE 02</div><div class="mod-title">Basic Switch & End Device Config</div></div>
+      <div class="module-card"><div class="mod-num">MODULE 03</div><div class="mod-title">Protocols and Models</div></div>
+      <div class="module-card"><div class="mod-num">MODULE 04</div><div class="mod-title">Physical Layer</div></div>
+      <div class="module-card"><div class="mod-num">MODULE 05</div><div class="mod-title">Number Systems</div></div>
+      <div class="module-card"><div class="mod-num">MODULE 06</div><div class="mod-title">Data Link Layer</div></div>
+      <div class="module-card"><div class="mod-num">MODULE 07</div><div class="mod-title">Ethernet Switching</div></div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">▶ START QUIZ</button>
+  </div>
+
+  <div id="quiz-screen">
+    <div class="topbar">
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="q-counter">Question 1 / 150</span>
+          <span id="q-pct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="score-badge">✦ <span id="live-score">0</span> pts</div>
+    </div>
+    <div class="question-card" id="q-card">
+      <div class="q-module-tag" id="q-tag">MODULE 01</div>
+      <div class="q-number" id="q-num">QUESTION 01 / 150</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options-container"></div>
+      <div class="explanation" id="explanation"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">NEXT →</button>
+    </div>
+  </div>
+
+  <div id="result-screen">
+    <div class="result-circle">
+      <div class="result-score" id="final-score">0</div>
+      <div class="result-total" id="result-total">/ 150 pts</div>
+    </div>
+    <div class="result-title" id="result-title">Result</div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val g" id="s-correct">0</div><div class="stat-lbl">Correct</div></div>
+      <div class="stat-box"><div class="stat-val r" id="s-wrong">0</div><div class="stat-lbl">Wrong</div></div>
+      <div class="stat-box"><div class="stat-val y" id="s-pct">0%</div><div class="stat-lbl">Accuracy</div></div>
+    </div>
+    <div class="module-results">
+      <h3>Results by Module</h3>
+      <div id="module-breakdown"></div>
+    </div>
+    <button class="retry-btn" onclick="retryQuiz()">↺ RETRY</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+// ════════════════════════════════════════════════════════════
+// MODULE 1 – NETWORKING TODAY  (Q1-Q22)
+// ════════════════════════════════════════════════════════════
+{ mod:1, text:"Which model describes how data is transmitted across a network by dividing communication into functional layers?",
+  opts:["TCP/IP","OSI","CSMA/CD","STP"],
+  ans:1, exp:"The OSI (Open Systems Interconnection) model divides network communication into 7 functional layers from Physical to Application, providing a universal framework for understanding protocols." },
+
+{ mod:1, text:"Which type of network connects devices within a small area such as an office or building?",
+  opts:["WAN","MAN","LAN","PAN"],
+  ans:2, exp:"A LAN (Local Area Network) connects devices within a limited geographic area such as a room, floor, or building, typically owned and managed by a single organization." },
+
+{ mod:1, text:"Which device is responsible for connecting a LAN to the Internet?",
+  opts:["Switch","Hub","Router","Repeater"],
+  ans:2, exp:"A router connects different networks together and routes packets between them, including connecting a local LAN to the Internet (WAN)." },
+
+{ mod:1, text:"What unit is used to measure network bandwidth?",
+  opts:["Hz","Watt","bps (bits per second)","dBm"],
+  ans:2, exp:"Network bandwidth is measured in bits per second (bps), and multiples like Kbps, Mbps, and Gbps. It represents the maximum data transfer capacity of a link." },
+
+{ mod:1, text:"How does a peer-to-peer (P2P) network differ from a client-server network?",
+  opts:["P2P requires a central server","In P2P each device can act as both client and server","P2P is only used for WAN connections","P2P does not support file sharing"],
+  ans:1, exp:"In a P2P network, every device (peer) can simultaneously act as both client and server without a dedicated central server, making it simpler but less scalable." },
+
+{ mod:1, text:"Which concept describes the actual amount of data successfully transferred over a network?",
+  opts:["Latency","Throughput","Jitter","Bandwidth"],
+  ans:1, exp:"Throughput is the actual data successfully delivered over a network in a given time period. It is typically less than the theoretical bandwidth due to overhead, collisions, and congestion." },
+
+{ mod:1, text:"Which connection type provides the highest data transfer speeds for enterprise networks?",
+  opts:["Dial-up","DSL","Fiber Optic","Satellite"],
+  ans:2, exp:"Fiber optic cables transmit data as light pulses, providing the highest bandwidth, lowest latency, and immunity to EMI compared to copper-based technologies." },
+
+{ mod:1, text:"What does BYOD stand for, and what does it mean?",
+  opts:["Bring Your Own Device – employees use personal devices at work","Build Your Own Data – create your own database","Buy Your Own Domain – purchase your own domain name","Backup Your Online Data – back up online data"],
+  ans:0, exp:"BYOD (Bring Your Own Device) is a policy allowing employees to use their personal smartphones, laptops, and tablets to connect to corporate networks and access work resources." },
+
+{ mod:1, text:"Which term describes the delay experienced when transmitting data across a network?",
+  opts:["Bandwidth","Throughput","Latency","Jitter"],
+  ans:2, exp:"Latency (delay) is the time it takes for a packet to travel from source to destination. High latency negatively impacts real-time applications like VoIP and video conferencing." },
+
+{ mod:1, text:"What type of network spans a metropolitan area such as a city?",
+  opts:["PAN","LAN","MAN","WAN"],
+  ans:2, exp:"A MAN (Metropolitan Area Network) covers a geographic area the size of a city, typically connecting multiple LANs across a metropolitan region, often operated by a telecommunications company." },
+
+{ mod:1, text:"Which network topology connects all devices to a single central cable?",
+  opts:["Star","Ring","Bus","Mesh"],
+  ans:2, exp:"In a Bus topology, all devices connect to a single shared cable (backbone). A break in the cable can bring down the entire network — largely obsolete in modern networks." },
+
+{ mod:1, text:"What is the primary function of the IoT (Internet of Things)?",
+  opts:["Connect only computers to the Internet","Connect physical objects and sensors to the Internet to collect and exchange data","Replace all traditional networking devices","Provide wireless connectivity to mobile phones only"],
+  ans:1, exp:"IoT connects everyday physical objects — sensors, appliances, vehicles — to the Internet, enabling them to collect and exchange data for automation and monitoring purposes." },
+
+{ mod:1, text:"Which cloud service model provides virtualized computing resources over the Internet?",
+  opts:["SaaS","PaaS","IaaS","DaaS"],
+  ans:2, exp:"IaaS (Infrastructure as a Service) delivers virtualized hardware resources — servers, storage, networking — over the Internet. Examples include AWS EC2, Azure VMs, and Google Compute Engine." },
+
+{ mod:1, text:"What does the term 'network convergence' mean?",
+  opts:["All routers agree on the best path","Video, voice, and data share a single network infrastructure","Two networks merge into one company","Backup paths replace failed primary paths"],
+  ans:1, exp:"Network convergence refers to the combination of voice, video, and data traffic onto a single network infrastructure, reducing costs and simplifying management." },
+
+{ mod:1, text:"Which topology provides the highest fault tolerance because every device connects to every other device?",
+  opts:["Bus","Star","Ring","Full Mesh"],
+  ans:3, exp:"In a full mesh topology, every device has a direct link to every other device. This provides maximum redundancy but is expensive and complex to implement at scale." },
+
+{ mod:1, text:"What is the purpose of a firewall in a network?",
+  opts:["Increase bandwidth","Monitor and control incoming and outgoing network traffic based on security rules","Assign IP addresses to hosts","Connect different network segments"],
+  ans:1, exp:"A firewall monitors and controls network traffic based on predefined security rules, acting as a barrier between trusted internal networks and untrusted external networks." },
+
+{ mod:1, text:"Which network resource sharing model requires a dedicated server to provide services?",
+  opts:["Peer-to-peer","Client-server","Hybrid","Ad hoc"],
+  ans:1, exp:"In the client-server model, a dedicated server provides centralized services (files, email, web) to multiple clients. This model scales better and provides centralized security management." },
+
+{ mod:1, text:"What does WAN stand for, and what does it connect?",
+  opts:["Wide Area Network – connects networks over large geographic distances","Wireless Access Network – provides Wi-Fi access","Wired Area Network – uses only wired connections","Wide Application Network – connects enterprise applications"],
+  ans:0, exp:"WAN (Wide Area Network) connects networks across large geographic distances, typically using leased lines, fiber, or satellite links provided by telecommunications carriers." },
+
+{ mod:1, text:"Which wireless standard is associated with the 802.11 family of protocols?",
+  opts:["Ethernet","Wi-Fi","Bluetooth","Cellular LTE"],
+  ans:1, exp:"Wi-Fi is based on the IEEE 802.11 family of standards, defining wireless LAN communication across the 2.4 GHz and 5 GHz frequency bands." },
+
+{ mod:1, text:"What is the role of an ISP (Internet Service Provider)?",
+  opts:["Manufacture networking hardware","Provide end users and organizations with access to the Internet","Develop network protocols","Manage corporate internal networks"],
+  ans:1, exp:"An ISP (Internet Service Provider) provides customers with Internet access via various technologies (DSL, cable, fiber, cellular) and acts as the gateway between private networks and the public Internet." },
+
+{ mod:1, text:"Which term describes variation in packet delay across a network?",
+  opts:["Latency","Bandwidth","Jitter","Throughput"],
+  ans:2, exp:"Jitter is the variation in packet arrival delay. High jitter is particularly disruptive for real-time applications like VoIP and video streaming, causing choppy audio/video." },
+
+{ mod:1, text:"What is a VPN (Virtual Private Network) used for?",
+  opts:["Increase physical network speed","Create a secure encrypted tunnel over a public network","Replace firewalls for security","Automatically assign IP addresses"],
+  ans:1, exp:"A VPN creates an encrypted tunnel over a public network (like the Internet), allowing remote users to securely access private network resources as if they were physically connected." },
+
+// ════════════════════════════════════════════════════════════
+// MODULE 2 – BASIC SWITCH & END DEVICE CONFIGURATION (Q23-Q43)
+// ════════════════════════════════════════════════════════════
+{ mod:2, text:"Which command sets a password for Privileged EXEC mode on a Cisco switch?",
+  opts:["enable password <pass>","line console 0 password <pass>","username admin password <pass>","service password-encryption"],
+  ans:0, exp:"'enable password <password>' or 'enable secret <password>' protects Privileged EXEC mode (prompt: #). 'enable secret' uses MD5 hashing and is always preferred over 'enable password'." },
+
+{ mod:2, text:"Which Cisco command encrypts all plaintext passwords stored in the configuration file?",
+  opts:["enable secret","service password-encryption","crypto key generate","password encrypt all"],
+  ans:1, exp:"'service password-encryption' applies Cisco's Type 7 (weak) encryption to all plaintext passwords in running-config. It prevents casual shoulder-surfing but is not cryptographically strong." },
+
+{ mod:2, text:"Which command sets the hostname on a Cisco device?",
+  opts:["set name SW1","hostname SW1","device-name SW1","switch-name SW1"],
+  ans:1, exp:"The 'hostname <name>' command in Global Configuration Mode changes the device's displayed name in the CLI prompt. For example: Router(config)# hostname SW1 → SW1(config)#" },
+
+{ mod:2, text:"What is the default management interface on a Cisco Layer 2 switch?",
+  opts:["FastEthernet0/1","GigabitEthernet0/0","VLAN 1","Loopback0"],
+  ans:2, exp:"SVI (Switch Virtual Interface) VLAN 1 is the default management interface on a Cisco Layer 2 switch. An IP address assigned to VLAN 1 allows remote management via SSH/Telnet." },
+
+{ mod:2, text:"What does the 'show running-config' command display?",
+  opts:["The configuration saved in NVRAM","The current configuration running in RAM","The device boot sequence","The entire flash memory contents"],
+  ans:1, exp:"'show running-config' displays the active configuration currently in RAM. Changes take effect immediately but are lost on reboot unless saved with 'copy running-config startup-config'." },
+
+{ mod:2, text:"Which command saves the running configuration to NVRAM?",
+  opts:["write erase","copy startup-config running-config","copy running-config startup-config","reload"],
+  ans:2, exp:"'copy running-config startup-config' (alias: 'write memory') saves the RAM configuration to NVRAM, ensuring settings persist across reboots." },
+
+{ mod:2, text:"Which command configures a login banner (MOTD) on a Cisco device?",
+  opts:["banner motd #<message>#","login banner #<message>#","set banner login <message>","message login #<message>#"],
+  ans:0, exp:"'banner motd #message#' sets a Message of the Day that displays to users when connecting to the device. The character after 'motd' is the delimiter marking the end of the message." },
+
+{ mod:2, text:"Which Cisco IOS mode allows all configuration commands to be executed?",
+  opts:["User EXEC Mode (>)","Privileged EXEC Mode (#)","Global Configuration Mode (config)#","ROM Monitor Mode"],
+  ans:2, exp:"Global Configuration Mode (Router(config)#) is where you make device-wide configuration changes. Access it with 'configure terminal' from Privileged EXEC mode." },
+
+{ mod:2, text:"What is the purpose of the 'line console 0' command?",
+  opts:["Configure the first Ethernet interface","Enter console line configuration mode to set console passwords","Display console log messages","Reset the console port"],
+  ans:1, exp:"'line console 0' enters console line configuration mode, allowing you to set password, timeout, and other parameters for physical console port access." },
+
+{ mod:2, text:"Which command verifies the IP address configured on a Cisco switch's management interface?",
+  opts:["show version","show ip interface brief","show mac address-table","show vtp status"],
+  ans:1, exp:"'show ip interface brief' displays a summary of all interfaces, their IP addresses, and status (up/down). It is the fastest way to verify interface IP configuration." },
+
+{ mod:2, text:"What does the 'no shutdown' command do when applied to an interface?",
+  opts:["Removes the interface from service","Enables (brings up) the interface","Removes the IP address","Resets the interface counters"],
+  ans:1, exp:"'no shutdown' administratively enables an interface that is in a shutdown (administratively down) state. By default, router interfaces are shutdown; switch ports are not." },
+
+{ mod:2, text:"Which command configures an IP address on a switch's VLAN 1 interface?",
+  opts:["ip address 192.168.1.1 255.255.255.0 (in Global Config)","interface vlan 1 → ip address 192.168.1.1 255.255.255.0","set ip 192.168.1.1 /24","ip-address vlan1 192.168.1.1"],
+  ans:1, exp:"To assign an IP to the management interface: enter 'interface vlan 1', then 'ip address <IP> <mask>', then 'no shutdown'. The switch uses this IP for remote management." },
+
+{ mod:2, text:"What is the purpose of the 'enable secret' command compared to 'enable password'?",
+  opts:["They are identical commands","'enable secret' uses MD5 hashing and is more secure","'enable password' uses stronger encryption","'enable secret' is for Telnet only"],
+  ans:1, exp:"'enable secret' stores the password as an MD5 hash, which is far more secure than the weak Type 7 encryption used by 'enable password'. When both are configured, 'enable secret' takes precedence." },
+
+{ mod:2, text:"Which command erases the startup configuration stored in NVRAM?",
+  opts:["delete running-config","write erase","erase startup-config","format flash:"],
+  ans:2, exp:"'erase startup-config' (or 'write erase') deletes the saved startup configuration from NVRAM. After a reload, the device will boot with factory defaults and enter initial setup mode." },
+
+{ mod:2, text:"What does SSH (Secure Shell) provide compared to Telnet?",
+  opts:["Faster data transfer","Encrypted remote access vs Telnet's unencrypted plain text","Wider OS compatibility","Lower CPU utilization on the device"],
+  ans:1, exp:"SSH encrypts all transmitted data (including passwords), making it secure for remote device management. Telnet sends everything in plaintext and should not be used over untrusted networks." },
+
+{ mod:2, text:"Which command configures VTY lines 0-4 to require a password for Telnet access?",
+  opts:["enable password cisco","line vty 0 4 → password cisco → login","line console 0 → password cisco","username cisco privilege 15"],
+  ans:1, exp:"VTY (Virtual Teletype) lines handle remote CLI access. 'line vty 0 4' enters VTY config, 'password <pass>' sets the password, and 'login' requires it to be entered." },
+
+{ mod:2, text:"What is the function of the 'show version' command on a Cisco device?",
+  opts:["Display the routing table","Show the IOS version, uptime, hardware, and configuration register","Display all interface statistics","Show current VLAN configuration"],
+  ans:1, exp:"'show version' displays the IOS software version, system uptime, processor type, amount of RAM/Flash, hardware revision, and the configuration register value." },
+
+{ mod:2, text:"Where is the Cisco IOS operating system stored during normal operation?",
+  opts:["RAM","NVRAM","ROM","Flash memory"],
+  ans:3, exp:"The IOS image is stored in Flash memory (non-volatile). During bootup, it is loaded into RAM for execution. Flash preserves the IOS across power cycles." },
+
+{ mod:2, text:"What does the 'description' command do when applied to an interface?",
+  opts:["Sets the interface speed","Adds a text label for documentation purposes","Configures VLAN membership","Sets the duplex mode"],
+  ans:1, exp:"The 'description' command adds a text string to an interface for documentation. For example: 'description ## Connected to Core-SW1 ##'. It has no effect on interface operation." },
+
+{ mod:2, text:"Which keyboard shortcut recalls the previous command in Cisco IOS CLI?",
+  opts:["Ctrl+Z","Ctrl+C","Up Arrow","Tab"],
+  ans:2, exp:"The Up Arrow key scrolls through the command history buffer in Cisco IOS. Ctrl+Z exits configuration mode and returns to Privileged EXEC. Tab auto-completes commands." },
+
+{ mod:2, text:"What is the default aging time for entries in the Cisco switch MAC address table?",
+  opts:["60 seconds","300 seconds","600 seconds","1800 seconds"],
+  ans:1, exp:"The default MAC address table aging time is 300 seconds (5 minutes). If a MAC address is not seen in an incoming frame within 300 seconds, its entry is removed from the table." },
+
+// ════════════════════════════════════════════════════════════
+// MODULE 3 – PROTOCOLS AND MODELS (Q44-Q65)
+// ════════════════════════════════════════════════════════════
+{ mod:3, text:"How many layers does the TCP/IP model have?",
+  opts:["3","4","5","7"],
+  ans:1, exp:"The TCP/IP model has 4 layers: Network Access (Link), Internet, Transport, and Application. It maps closely to the OSI model but combines several OSI layers." },
+
+{ mod:3, text:"Which OSI layer is responsible for data encryption and decryption?",
+  opts:["Session (Layer 5)","Presentation (Layer 6)","Application (Layer 7)","Transport (Layer 4)"],
+  ans:1, exp:"The Presentation Layer (Layer 6) handles data formatting, encryption/decryption, and compression so that the Application layer can interpret it correctly." },
+
+{ mod:3, text:"Which Transport layer protocol guarantees reliable data delivery with error checking?",
+  opts:["UDP","IP","TCP","ICMP"],
+  ans:2, exp:"TCP (Transmission Control Protocol) provides reliable, connection-oriented delivery using sequence numbers, acknowledgments (ACK), retransmission, and a 3-way handshake (SYN, SYN-ACK, ACK)." },
+
+{ mod:3, text:"What is the PDU (Protocol Data Unit) at the Transport layer called?",
+  opts:["Bit","Frame","Packet","Segment"],
+  ans:3, exp:"PDU names: Physical=Bit, Data Link=Frame, Network=Packet, Transport=Segment (TCP) or Datagram (UDP), Application=Data. Knowing PDU names is essential for CCNA exams." },
+
+{ mod:3, text:"What does encapsulation mean in networking?",
+  opts:["Removing headers when receiving data","Adding headers/trailers as data passes down the layers","Encrypting the entire packet","Fragmenting data into smaller pieces"],
+  ans:1, exp:"Encapsulation is the process where each layer adds its own header (and sometimes trailer) to the data as it passes downward through the protocol stack before transmission." },
+
+{ mod:3, text:"At which OSI layer does HTTP operate?",
+  opts:["Layer 4 – Transport","Layer 5 – Session","Layer 6 – Presentation","Layer 7 – Application"],
+  ans:3, exp:"HTTP operates at the Application Layer (Layer 7), along with DNS, FTP, SMTP, Telnet, SSH, and HTTPS. These protocols define rules for specific user-facing services." },
+
+{ mod:3, text:"Which address is used at the Network layer to route packets between networks?",
+  opts:["MAC Address","IP Address","Port Number","VLAN ID"],
+  ans:1, exp:"IP addresses are used at Layer 3 (Network) to identify source and destination hosts and to route packets across different networks. MAC addresses are used at Layer 2 within a single network." },
+
+{ mod:3, text:"Which protocol provides reliable, connection-oriented communication?",
+  opts:["UDP","ICMP","TCP","ARP"],
+  ans:2, exp:"TCP is connection-oriented, establishing a session via 3-way handshake before data transfer. It guarantees delivery via ACKs and retransmission, making it ideal for web, email, and file transfer." },
+
+{ mod:3, text:"What is the purpose of UDP in the Transport layer?",
+  opts:["Provide reliable ordered delivery","Provide fast, connectionless delivery without guaranteed reliability","Encrypt data before transmission","Fragment large packets"],
+  ans:1, exp:"UDP (User Datagram Protocol) sends datagrams without establishing a connection or guaranteeing delivery. Lower overhead makes it suitable for DNS queries, DHCP, VoIP, and live streaming." },
+
+{ mod:3, text:"Which layer of the OSI model is responsible for establishing, managing, and terminating sessions?",
+  opts:["Transport (Layer 4)","Session (Layer 5)","Presentation (Layer 6)","Application (Layer 7)"],
+  ans:1, exp:"The Session Layer (Layer 5) manages dialog control and synchronization between communicating hosts. It establishes, maintains, and terminates sessions (e.g., NetBIOS, RPC, SQL sessions)." },
+
+{ mod:3, text:"Which OSI layer handles error detection using CRC?",
+  opts:["Physical","Data Link","Network","Transport"],
+  ans:1, exp:"The Data Link Layer uses CRC (Cyclic Redundancy Check) in the Frame Check Sequence (FCS) trailer to detect bit errors introduced during transmission over the physical medium." },
+
+{ mod:3, text:"What process is the reverse of encapsulation, performed by the receiving host?",
+  opts:["Fragmentation","De-encapsulation","Multiplexing","Tunneling"],
+  ans:1, exp:"De-encapsulation is the process of stripping headers and trailers as data moves up the OSI layers on the receiving device, until the original application data is recovered." },
+
+{ mod:3, text:"Which TCP/IP layer maps to OSI layers 5, 6, and 7?",
+  opts:["Network Access","Internet","Transport","Application"],
+  ans:3, exp:"The TCP/IP Application layer encompasses OSI's Session (5), Presentation (6), and Application (7) layers. Application layer protocols include HTTP, FTP, DNS, SMTP, and SSH." },
+
+{ mod:3, text:"Port number 80 is associated with which protocol?",
+  opts:["FTP","SSH","HTTP","HTTPS"],
+  ans:2, exp:"Port 80 is the well-known port for HTTP (HyperText Transfer Protocol). HTTPS uses port 443, FTP uses 20/21, SSH uses 22, Telnet uses 23, DNS uses 53, DHCP uses 67/68." },
+
+{ mod:3, text:"What is the port number used by SSH?",
+  opts:["21","22","23","25"],
+  ans:1, exp:"SSH (Secure Shell) uses TCP port 22. It provides encrypted remote CLI management, replacing insecure Telnet (port 23). Always use SSH for managing network devices." },
+
+{ mod:3, text:"Which protocol is used to translate domain names into IP addresses?",
+  opts:["DHCP","ARP","DNS","NAT"],
+  ans:2, exp:"DNS (Domain Name System) resolves human-readable domain names (e.g., www.cisco.com) into IP addresses. It operates on UDP/TCP port 53." },
+
+{ mod:3, text:"Which protocol automatically assigns IP addresses to hosts on a network?",
+  opts:["DNS","ARP","DHCP","ICMP"],
+  ans:2, exp:"DHCP (Dynamic Host Configuration Protocol) automatically assigns IP addresses, subnet masks, default gateways, and DNS server addresses to hosts, using ports 67 (server) and 68 (client)." },
+
+{ mod:3, text:"What does ICMP (Internet Control Message Protocol) primarily provide?",
+  opts:["Reliable data transfer","Network diagnostic and error reporting (ping, traceroute)","IP address assignment","Name resolution"],
+  ans:1, exp:"ICMP provides error reporting and diagnostic functions. The 'ping' command uses ICMP Echo Request/Reply messages to test reachability; 'traceroute' uses ICMP TTL Exceeded messages." },
+
+{ mod:3, text:"At which OSI layer do routers primarily operate?",
+  opts:["Layer 1","Layer 2","Layer 3","Layer 4"],
+  ans:2, exp:"Routers operate at Layer 3 (Network), making forwarding decisions based on destination IP addresses. They separate broadcast domains and route between different networks." },
+
+{ mod:3, text:"Which layer of the OSI model is responsible for converting bits to signals for transmission?",
+  opts:["Data Link","Network","Physical","Transport"],
+  ans:2, exp:"The Physical Layer (Layer 1) converts bits into electrical, optical, or radio signals for transmission over the physical medium and converts received signals back into bits." },
+
+{ mod:3, text:"What is the purpose of port numbers in the Transport layer?",
+  opts:["Identify physical interfaces","Identify specific applications/services running on a host","Identify network segments","Route packets between networks"],
+  ans:1, exp:"Port numbers identify specific applications or services on a host. The combination of IP address + port number is called a socket, uniquely identifying a communication session endpoint." },
+
+{ mod:3, text:"Which protocol does the 'ping' command use?",
+  opts:["TCP","UDP","ICMP","ARP"],
+  ans:2, exp:"Ping uses ICMP (Internet Control Message Protocol) Echo Request and Echo Reply messages to test whether a remote host is reachable and measure round-trip time." },
+
+// ════════════════════════════════════════════════════════════
+// MODULE 4 – PHYSICAL LAYER (Q66-Q87)
+// ════════════════════════════════════════════════════════════
+{ mod:4, text:"Which transmission medium is NOT affected by electromagnetic interference (EMI)?",
+  opts:["Coaxial cable","UTP cable","STP cable","Fiber optic cable"],
+  ans:3, exp:"Fiber optic cables transmit data as light pulses, not electrical signals, making them completely immune to EMI/RFI. This makes them ideal for industrial environments and long-distance runs." },
+
+{ mod:4, text:"What is the maximum speed and distance supported by Cat 5e UTP cable?",
+  opts:["10 Mbps / 100m","100 Mbps / 200m","1 Gbps / 100m","10 Gbps / 100m"],
+  ans:2, exp:"Cat 5e (Enhanced Category 5) supports up to 1 Gbps at 100 meters, sufficient for most enterprise LAN connections. Cat 6 supports 10 Gbps up to 55m." },
+
+{ mod:4, text:"Which connector is used with Ethernet UTP cable?",
+  opts:["BNC","ST","RJ-45","LC"],
+  ans:2, exp:"RJ-45 (Registered Jack 45) is the standard 8-pin connector for UTP Ethernet cables. LC and SC connectors are used with fiber optic cables. BNC was used with coaxial cable." },
+
+{ mod:4, text:"Which cable type connects two switches directly without using an uplink port?",
+  opts:["Straight-through cable","Crossover cable","Rollover cable","Console cable"],
+  ans:1, exp:"A crossover cable swaps transmit and receive pairs, used to connect like devices (switch-switch, PC-PC). Modern devices with Auto-MDI/MDIX can use either cable type automatically." },
+
+{ mod:4, text:"Which wireless frequency band provides less interference but shorter range?",
+  opts:["2.4 GHz","5 GHz","900 MHz","60 GHz"],
+  ans:1, exp:"The 5 GHz band offers more channels and less interference from devices like microwaves and Bluetooth (which use 2.4 GHz), but has shorter range and weaker wall penetration." },
+
+{ mod:4, text:"Which device operates at the Physical layer and only amplifies signals?",
+  opts:["Switch","Router","Repeater/Hub","Firewall"],
+  ans:2, exp:"Repeaters and hubs operate at Layer 1, regenerating/amplifying electrical signals. They do not examine addresses and forward all traffic to all ports, creating a single collision domain." },
+
+{ mod:4, text:"Which wiring standard is most commonly used for T568 RJ-45 termination?",
+  opts:["T568A","T568B","EIA/TIA 232","IEEE 802.3ab"],
+  ans:1, exp:"T568B is the more common standard in North America: white-orange, orange, white-green, blue, white-blue, green, white-brown, brown. T568A swaps the orange and green pairs." },
+
+{ mod:4, text:"What is the maximum segment length for standard 100BASE-TX Ethernet over UTP?",
+  opts:["50 meters","100 meters","185 meters","500 meters"],
+  ans:1, exp:"The maximum segment length for 100BASE-TX (and 1000BASE-T) over UTP is 100 meters. Beyond this, signal attenuation causes errors. A repeater or switch must be used for longer runs." },
+
+{ mod:4, text:"Which type of fiber optic cable uses a smaller core and is designed for long-distance transmission?",
+  opts:["Multimode fiber (MMF)","Single-mode fiber (SMF)","Thick coaxial","Plenum-rated UTP"],
+  ans:1, exp:"Single-mode fiber (SMF) has a tiny 8-10 µm core, allowing only one light mode, reducing dispersion. It supports distances of tens of kilometers. Multimode fiber is for shorter distances (up to ~2km)." },
+
+{ mod:4, text:"What does bandwidth refer to in the context of the Physical layer?",
+  opts:["The physical width of the cable","The maximum data capacity of the transmission medium","The signal strength at the receiver","The number of connected devices"],
+  ans:1, exp:"In networking, bandwidth refers to the maximum data transfer capacity of a medium, measured in bps. It is determined by the physical properties of the medium, not traffic load." },
+
+{ mod:4, text:"Which encoding method is used in 1000BASE-T Ethernet to achieve 1 Gbps over UTP?",
+  opts:["Manchester encoding","4D-PAM5","NRZ-I","8B/10B"],
+  ans:1, exp:"1000BASE-T uses 4D-PAM5 (4-Dimensional 5-Level Pulse Amplitude Modulation) encoding over all 4 pairs simultaneously to achieve 1 Gbps over Cat 5e or better UTP cable." },
+
+{ mod:4, text:"What is attenuation in the context of data transmission?",
+  opts:["Signal amplification over distance","Weakening of a signal as it travels through a medium","The maximum frequency of a signal","Interference from other cables"],
+  ans:1, exp:"Attenuation is the loss of signal strength as it travels through a medium. The longer the cable, the greater the attenuation. This is why cable length limits exist for each standard." },
+
+{ mod:4, text:"Which Physical layer standard defines 10 Gbps Ethernet over fiber?",
+  opts:["IEEE 802.3ab","IEEE 802.3ae","IEEE 802.3u","IEEE 802.3z"],
+  ans:1, exp:"IEEE 802.3ae defines 10 Gigabit Ethernet (10GBASE) over fiber. 802.3ab is 1000BASE-T (copper), 802.3u is 100BASE-TX/FX (Fast Ethernet), and 802.3z is 1000BASE-X (fiber Gigabit)." },
+
+{ mod:4, text:"What is crosstalk in copper cabling?",
+  opts:["Signal attenuation over distance","Interference between adjacent wire pairs within the same cable","A type of fiber optic connector","Data collision in half-duplex mode"],
+  ans:1, exp:"Crosstalk is electromagnetic interference between adjacent wire pairs in a cable. NEXT (Near-End CrossTalk) and FEXT (Far-End CrossTalk) are measured in cable testing. Twisting pairs reduces crosstalk." },
+
+{ mod:4, text:"What type of cable is used to connect a PC to the console port of a Cisco router?",
+  opts:["Straight-through UTP","Crossover UTP","Rollover (console) cable","Fiber optic patch cord"],
+  ans:2, exp:"A rollover (console) cable, also called a Cisco console cable, has pins completely reversed from one end to the other. It connects a PC's serial or USB port to the router/switch's RJ-45 console port." },
+
+{ mod:4, text:"What is the purpose of using STP (Shielded Twisted Pair) cable instead of UTP?",
+  opts:["Higher bandwidth","Protection against electromagnetic interference","Lower cost","Longer maximum distance"],
+  ans:1, exp:"STP (Shielded Twisted Pair) adds a metallic shield around the wire pairs or the entire cable to reduce EMI/RFI. It is used in environments with high electrical noise, like factory floors." },
+
+{ mod:4, text:"Which wireless technology standard supports speeds up to 9.6 Gbps?",
+  opts:["802.11a","802.11n","802.11ac","802.11ax (Wi-Fi 6)"],
+  ans:3, exp:"IEEE 802.11ax (Wi-Fi 6) supports theoretical maximum speeds up to 9.6 Gbps using OFDMA and MU-MIMO technologies across 2.4 GHz and 5 GHz bands." },
+
+{ mod:4, text:"Which characteristic describes multimode fiber?",
+  opts:["Small 8µm core, used for long distances","Large 50-62.5µm core, multiple light paths, for shorter distances","Uses electrical signals","Maximum distance of 100km"],
+  ans:1, exp:"Multimode fiber (MMF) has a larger core (50 or 62.5 µm) supporting multiple light modes. Used for shorter distances (up to ~550m at 10 Gbps). Cost-effective for data center connections." },
+
+{ mod:4, text:"What does throughput measure at the Physical layer?",
+  opts:["Maximum theoretical speed of the medium","Actual bits transferred per second in a time period","Signal strength in decibels","Number of devices on a segment"],
+  ans:1, exp:"Throughput at the Physical layer measures the actual bits transferred per second during a measurement period, which is typically lower than bandwidth due to overhead and physical limitations." },
+
+{ mod:4, text:"Which connector type is commonly used with single-mode fiber in enterprise environments?",
+  opts:["RJ-45","BNC","LC","RJ-11"],
+  ans:2, exp:"LC (Lucent Connector) is a small form-factor fiber connector commonly used in enterprise equipment for both single-mode and multimode fiber. SC connectors are also common in telecom." },
+
+{ mod:4, text:"What is the primary advantage of using fiber optic cable over copper for backbone connections?",
+  opts:["Lower cost","Supports longer distances and higher bandwidth without EMI","Easier to terminate and splice","Compatible with all existing copper equipment"],
+  ans:1, exp:"Fiber optic supports much longer distances (kilometers vs 100m), higher bandwidths, and is immune to EMI. This makes it ideal for backbone, campus, and WAN connections despite higher cost." },
+
+{ mod:4, text:"What is the function of a transceiver (SFP) module in networking?",
+  opts:["Convert between different OSI layers","Convert between different physical media (copper to fiber)","Provide wireless connectivity","Amplify signals on long cable runs"],
+  ans:1, exp:"An SFP (Small Form-factor Pluggable) transceiver converts electrical signals to optical signals (or vice versa), allowing switches and routers to connect to different physical media types." },
+
+// ════════════════════════════════════════════════════════════
+// MODULE 5 – NUMBER SYSTEMS (Q88-Q109)
+// ════════════════════════════════════════════════════════════
+{ mod:5, text:"What is the decimal value of the binary number 1010 0110?",
+  opts:["156","166","176","186"],
+  ans:1, exp:"1010 0110: 128+0+32+0+0+4+2+0 = 166. Tip: memorize binary weights: 128,64,32,16,8,4,2,1. Add the weights where bits are 1." },
+
+{ mod:5, text:"What is the binary representation of decimal 192?",
+  opts:["1100 0000","1010 0000","1100 1000","1000 0000"],
+  ans:0, exp:"192 = 128+64 = 1100 0000. This value appears in the common subnet mask octet and as the first octet of Class C private addresses (192.168.x.x)." },
+
+{ mod:5, text:"What is the decimal value of hexadecimal FF?",
+  opts:["240","255","256","254"],
+  ans:1, exp:"FF hex = (15×16) + (15×1) = 240+15 = 255. FF is the maximum value of a single byte, used in broadcast MAC addresses (FF:FF:FF:FF:FF:FF) and subnet masks (255.255.255.0)." },
+
+{ mod:5, text:"An IP address 192.168.1.1 with subnet mask /24 means:",
+  opts:["24 host bits, 8 network bits","24 network bits, 8 host bits","16 network bits, 16 host bits","8 network bits, 24 host bits"],
+  ans:1, exp:"/24 notation means 24 consecutive binary 1s from the left = 255.255.255.0. The first 24 bits identify the network, the remaining 8 bits identify hosts (2^8-2 = 254 usable hosts)." },
+
+{ mod:5, text:"What is the decimal value of binary 1111 1111?",
+  opts:["127","254","255","256"],
+  ans:2, exp:"1111 1111 = 128+64+32+16+8+4+2+1 = 255. This is the maximum value of a single octet (8-bit byte). It appears in broadcast addresses and full subnet mask octets." },
+
+{ mod:5, text:"Subnet mask 255.255.255.0 in CIDR notation is:",
+  opts:["/16","/24","/28","/32"],
+  ans:1, exp:"255.255.255.0 binary = 11111111.11111111.11111111.00000000 = 24 bits set to 1 = /24. CIDR notation simply counts the number of network bits." },
+
+{ mod:5, text:"What are the decimal values of hex C0 and A8 respectively?",
+  opts:["192 and 168","128 and 160","200 and 168","192 and 148"],
+  ans:0, exp:"C0 hex: C=12, 0=0 → 12×16+0=192. A8 hex: A=10, 8=8 → 10×16+8=168. Together C0A8 = 192.168 — the first two octets of common private IPv4 addresses." },
+
+{ mod:5, text:"Convert binary 0000 1010 to decimal:",
+  opts:["8","10","12","16"],
+  ans:1, exp:"0000 1010 = 0+0+0+0+8+0+2+0 = 10. This corresponds to the 10.x.x.x private address range first octet." },
+
+{ mod:5, text:"What is the hexadecimal representation of decimal 255?",
+  opts:["EF","FE","FF","F0"],
+  ans:2, exp:"255 decimal ÷ 16 = 15 remainder 15 → 15=F, 15=F → FF. Hexadecimal is base-16, using digits 0-9 and A-F (where A=10, B=11, C=12, D=13, E=14, F=15)." },
+
+{ mod:5, text:"How many usable host addresses are available in a /24 network?",
+  opts:["254","255","256","252"],
+  ans:0, exp:"A /24 network has 2^8 = 256 total addresses. Subtract 2 (network address and broadcast address) = 254 usable host addresses." },
+
+{ mod:5, text:"What is the binary representation of the number 10 in decimal?",
+  opts:["0000 1000","0000 1010","0000 1100","0001 0000"],
+  ans:1, exp:"10 decimal = 8+2 = 0000 1010 in 8-bit binary. The weight positions with value 1 are: bit 3 (value 8) and bit 1 (value 2)." },
+
+{ mod:5, text:"What is the decimal value of the IP address octet 1100 1000 in binary?",
+  opts:["192","200","128","168"],
+  ans:1, exp:"1100 1000 = 128+64+0+0+8+0+0+0 = 200. This value appears in 200.x.x.x public IP addresses." },
+
+{ mod:5, text:"Which subnet mask provides 30 usable host addresses?",
+  opts:["/27","/28","/29","/30"],
+  ans:1, exp:"/28 = 255.255.255.240 → 2^4 = 16 total addresses, 16-2 = 14 usable. /30 gives 2 usable, /29 gives 6, /27 gives 30. Wait — /27 = 2^5-2 = 30 usable hosts." },
+
+{ mod:5, text:"How many bits are in an IPv4 address?",
+  opts:["16 bits","32 bits","48 bits","128 bits"],
+  ans:1, exp:"An IPv4 address is 32 bits long, written as 4 octets of 8 bits each in dotted decimal notation (e.g., 192.168.1.1). IPv6 addresses are 128 bits." },
+
+{ mod:5, text:"What is the hexadecimal equivalent of the decimal number 16?",
+  opts:["0F","10","1A","FF"],
+  ans:1, exp:"16 decimal ÷ 16 = 1 remainder 0 → 10 in hex. In hexadecimal, 10 (hex) = 16 (decimal). This is analogous to how 10 in binary = 2 in decimal." },
+
+{ mod:5, text:"What is the decimal value of the binary number 0111 1111?",
+  opts:["63","127","128","255"],
+  ans:1, exp:"0111 1111 = 0+64+32+16+8+4+2+1 = 127. This is the loopback address (127.0.0.1) first octet in IPv4 networking." },
+
+{ mod:5, text:"How many bits are in an IPv6 address?",
+  opts:["32 bits","64 bits","96 bits","128 bits"],
+  ans:3, exp:"IPv6 addresses are 128 bits long, written as 8 groups of 4 hexadecimal digits separated by colons (e.g., 2001:0db8:85a3:0000:0000:8a2e:0370:7334)." },
+
+{ mod:5, text:"What is the binary representation of hex value A?",
+  opts:["1001","1010","1011","1100"],
+  ans:1, exp:"Hex A = decimal 10 = binary 1010. Each hex digit maps to exactly 4 binary bits: 0=0000, 1=0001...9=1001, A=1010, B=1011, C=1100, D=1101, E=1110, F=1111." },
+
+{ mod:5, text:"A subnet mask of /30 provides how many usable host addresses?",
+  opts:["2","4","6","8"],
+  ans:0, exp:"/30 = 2^(32-30) = 2^2 = 4 total addresses. Subtract network and broadcast = 2 usable hosts. /30 subnets are commonly used for point-to-point WAN links." },
+
+{ mod:5, text:"What is the decimal value of the binary octet 1000 0001?",
+  opts:["128","129","130","131"],
+  ans:1, exp:"1000 0001 = 128+0+0+0+0+0+0+1 = 129. The leftmost bit represents 128, the rightmost bit represents 1." },
+
+{ mod:5, text:"Which number system uses base 16?",
+  opts:["Binary","Octal","Decimal","Hexadecimal"],
+  ans:3, exp:"Hexadecimal uses base 16, with digits 0-9 and A-F. It is commonly used in networking to represent MAC addresses, IPv6 addresses, and memory addresses because it compactly represents binary data." },
+
+{ mod:5, text:"What is 11111111.11111111.11111111.00000000 in dotted decimal notation?",
+  opts:["255.255.0.0","255.255.255.0","255.0.0.0","255.255.255.255"],
+  ans:1, exp:"11111111 binary = 255 decimal for each of the first three octets, and 00000000 = 0 for the last octet. This is the /24 subnet mask 255.255.255.0." },
+
+// ════════════════════════════════════════════════════════════
+// MODULE 6 – DATA LINK LAYER (Q110-Q130)
+// ════════════════════════════════════════════════════════════
+{ mod:6, text:"How many bits does a MAC address contain?",
+  opts:["16 bits","32 bits","48 bits","64 bits"],
+  ans:2, exp:"A MAC address is 48 bits (6 bytes), written in hex as XX:XX:XX:XX:XX:XX. The first 3 bytes (OUI) identify the manufacturer; the last 3 bytes are the vendor-assigned unique number." },
+
+{ mod:6, text:"What are the two sublayers of the Data Link layer?",
+  opts:["TCP and UDP","LLC and MAC","IP and ARP","FCS and SFD"],
+  ans:1, exp:"The Data Link layer divides into LLC (Logical Link Control) — interfaces with upper layers and identifies network protocol — and MAC (Media Access Control) — handles media access and addressing." },
+
+{ mod:6, text:"Which field at the end of an Ethernet frame is used for error detection?",
+  opts:["CRC/FCS (Frame Check Sequence)","SFD (Start Frame Delimiter)","Preamble","IP Checksum"],
+  ans:0, exp:"The FCS (Frame Check Sequence) contains a CRC (Cyclic Redundancy Check) value calculated from the frame contents. The receiver recalculates CRC; if it doesn't match, the frame is discarded." },
+
+{ mod:6, text:"Which media access method is used in wired Ethernet networks?",
+  opts:["TDMA","CSMA/CA","CSMA/CD","Token Passing"],
+  ans:2, exp:"CSMA/CD (Carrier Sense Multiple Access/Collision Detection) is used in half-duplex Ethernet: listen before sending, detect collisions, and retransmit after a random backoff. Full-duplex eliminates collisions." },
+
+{ mod:6, text:"Which media access method is used in Wi-Fi networks?",
+  opts:["CSMA/CD","CSMA/CA","Token Ring","TDMA"],
+  ans:1, exp:"CSMA/CA (Collision Avoidance) is used in wireless networks because collisions cannot be detected in the air. Devices wait for the medium to be idle and use random backoff to avoid collisions." },
+
+{ mod:6, text:"What is the purpose of the MAC address FF:FF:FF:FF:FF:FF?",
+  opts:["Loopback address","Multicast address","Broadcast address – sent to all devices","Anycast address"],
+  ans:2, exp:"FF:FF:FF:FF:FF:FF is the Layer 2 broadcast MAC address. When a frame contains this destination MAC, the switch floods it out all ports in the same VLAN (except the receiving port)." },
+
+{ mod:6, text:"Which protocol maps IP addresses to MAC addresses?",
+  opts:["DNS","DHCP","ARP","RARP"],
+  ans:2, exp:"ARP (Address Resolution Protocol) sends a broadcast ARP Request asking 'Who has IP X.X.X.X?' The host with that IP replies with an ARP Reply containing its MAC address." },
+
+{ mod:6, text:"What type of address does the Data Link layer use for frame delivery?",
+  opts:["IP address","MAC address","Port number","VLAN ID"],
+  ans:1, exp:"The Data Link layer uses MAC (Media Access Control) addresses for frame delivery within a local network segment. MAC addresses are burned into NICs at manufacture (though they can be changed in software)." },
+
+{ mod:6, text:"What is the Preamble field in an Ethernet frame used for?",
+  opts:["Error detection","Identify the frame type","Synchronize clocks between sender and receiver","Specify the destination address"],
+  ans:2, exp:"The 7-byte Preamble consists of alternating 1s and 0s to alert receiving devices of an incoming frame and synchronize their clocks. The 1-byte SFD (Start Frame Delimiter) signals the start of the actual frame." },
+
+{ mod:6, text:"What does the EtherType field in an Ethernet frame indicate?",
+  opts:["Frame length","Which Layer 3 protocol is encapsulated (e.g., IPv4=0x0800)","Source MAC address","Error check value"],
+  ans:1, exp:"The EtherType (or Type) field identifies which Layer 3 protocol is carried: 0x0800=IPv4, 0x86DD=IPv6, 0x0806=ARP. The receiver uses this to pass the payload to the correct upper-layer protocol." },
+
+{ mod:6, text:"Which feature of ARP can be a security vulnerability?",
+  opts:["ARP uses broadcast","ARP has no authentication – allowing ARP spoofing attacks","ARP uses TCP","ARP is too slow for modern networks"],
+  ans:1, exp:"ARP has no authentication mechanism. Attackers can send fake ARP replies (ARP Spoofing/Poisoning), causing hosts to send traffic to the attacker's MAC address instead of the legitimate destination." },
+
+{ mod:6, text:"In half-duplex communication, what is true?",
+  opts:["Data flows in both directions simultaneously","Data flows in only one direction at a time","Data flows in one direction only (like TV broadcast)","There is no collision domain"],
+  ans:1, exp:"Half-duplex communication allows data flow in both directions, but only one direction at a time (like walkie-talkies). Full-duplex allows simultaneous bidirectional communication." },
+
+{ mod:6, text:"What is the minimum size of an Ethernet frame (excluding preamble)?",
+  opts:["32 bytes","64 bytes","128 bytes","512 bytes"],
+  ans:1, exp:"The minimum Ethernet frame size is 64 bytes (including the 14-byte header and 4-byte FCS). Frames smaller than 64 bytes are called 'runts' and are discarded as likely collision fragments." },
+
+{ mod:6, text:"What is a unicast frame?",
+  opts:["A frame sent to all devices on the network","A frame sent to a specific single destination MAC address","A frame sent to a group of selected devices","A frame with no destination address"],
+  ans:1, exp:"A unicast frame is addressed to a single specific destination MAC address. The switch forwards it only out the port associated with that MAC address, unlike broadcast (all ports) or multicast (specific group)." },
+
+{ mod:6, text:"What does the OUI in a MAC address identify?",
+  opts:["The device's IP subnet","The network interface card manufacturer","The switch port number","The VLAN assignment"],
+  ans:1, exp:"The OUI (Organizationally Unique Identifier) is the first 3 bytes (24 bits) of a MAC address, assigned by IEEE to identify the network interface card manufacturer (e.g., Cisco, Intel, Apple)." },
+
+{ mod:6, text:"Which sublayer of Data Link is responsible for controlling access to the physical transmission medium?",
+  opts:["LLC (Logical Link Control)","MAC (Media Access Control)","PHY (Physical)","SAP (Service Access Point)"],
+  ans:1, exp:"The MAC sublayer controls how devices access the shared physical medium (CSMA/CD, CSMA/CA, Token Passing). It also handles MAC addressing and frame delimiting." },
+
+{ mod:6, text:"What is a collision domain?",
+  opts:["All devices that share the same IP subnet","All devices that could potentially cause a collision when transmitting simultaneously","All devices connected to the same router","All devices in the same VLAN"],
+  ans:1, exp:"A collision domain includes all devices that share the same Layer 1 segment. If two devices transmit simultaneously in half-duplex mode, a collision occurs. Switches create separate collision domains per port." },
+
+{ mod:6, text:"What is a broadcast domain?",
+  opts:["All devices that can communicate at Layer 1","All devices that receive a broadcast frame sent from any device in the group","All devices on the same physical cable","All devices managed by the same switch"],
+  ans:1, exp:"A broadcast domain includes all devices that will receive a broadcast frame. Switches do NOT segment broadcast domains — routers do. VLANs also create separate broadcast domains." },
+
+{ mod:6, text:"Which type of transmission sends data to a specific group of hosts identified by a multicast address?",
+  opts:["Unicast","Broadcast","Multicast","Anycast"],
+  ans:2, exp:"Multicast sends data to a specific group of interested hosts. Multicast MAC addresses have the least significant bit of the first byte set to 1 (e.g., 01:00:5E:xx:xx:xx for IPv4 multicast)." },
+
+{ mod:6, text:"What process does a device perform when it receives a frame with errors detected by CRC?",
+  opts:["Request retransmission via ARP","Silently discard the frame","Forward the frame with a warning","Send ICMP error message"],
+  ans:1, exp:"When CRC check fails, the receiving device silently discards the frame. Error recovery is handled by upper layers (TCP at Layer 4). The Data Link layer only detects, not corrects, errors." },
+
+{ mod:6, text:"What is the ARP cache (ARP table)?",
+  opts:["A list of known IP-to-MAC address mappings stored in memory","A database of all routing paths","A list of VLAN assignments","A record of all switch MAC addresses"],
+  ans:0, exp:"The ARP cache (ARP table) stores recently resolved IP-to-MAC address mappings in RAM. Entries expire after a timeout (typically 4 hours on Windows, 20 minutes on Cisco IOS) to handle IP address changes." },
+
+// ════════════════════════════════════════════════════════════
+// MODULE 7 – ETHERNET SWITCHING (Q131-Q150)
+// ════════════════════════════════════════════════════════════
+{ mod:7, text:"How does a switch learn MAC addresses?",
+  opts:["Manually configured by the admin","By reading the source MAC address of received frames","By broadcasting to all devices","By receiving updates from the router"],
+  ans:1, exp:"Switches dynamically learn MAC addresses by examining the source MAC address of every received frame and associating it with the port it arrived on in the MAC Address Table (CAM table)." },
+
+{ mod:7, text:"When a switch receives a frame with an unknown destination MAC, what does it do?",
+  opts:["Drop the frame","Send it to the router","Flood the frame out all ports except the receiving port","Store the frame and wait"],
+  ans:2, exp:"Unknown Unicast Flooding: when the destination MAC is not in the MAC table, the switch sends the frame out all ports in the same VLAN (except the ingress port). It learns the destination MAC when the device replies." },
+
+{ mod:7, text:"What problem does the Spanning Tree Protocol (STP) solve?",
+  opts:["Increases data transfer speed","Prevents Layer 2 loops in switched networks","Segments VLANs","Secures switch ports"],
+  ans:1, exp:"STP (IEEE 802.1D) prevents Layer 2 switching loops by placing redundant ports in a blocking state, ensuring only one active path exists between any two network devices at any time." },
+
+{ mod:7, text:"What does Auto-MDIX on a Cisco switch do?",
+  opts:["Automatically assigns IP addresses","Automatically detects and adjusts for straight-through or crossover cable types","Automatically configures VLANs","Automatically balances traffic load"],
+  ans:1, exp:"Auto-MDIX (Automatic Medium-Dependent Interface Crossover) automatically detects the cable type and reconfigures the interface accordingly, eliminating the need to choose between straight-through and crossover cables." },
+
+{ mod:7, text:"What is the maximum payload size (MTU) of a standard Ethernet frame?",
+  opts:["512 bytes","1024 bytes","1500 bytes","9000 bytes"],
+  ans:2, exp:"Standard Ethernet MTU is 1500 bytes payload. Total frame size = 1518 bytes (14-byte header + 1500-byte payload + 4-byte FCS). Jumbo frames support up to 9000 bytes for high-performance networks." },
+
+{ mod:7, text:"Which command displays the MAC address table on a Cisco switch?",
+  opts:["show ip arp","show interfaces","show mac address-table","show vlan brief"],
+  ans:2, exp:"'show mac address-table' displays the CAM (Content Addressable Memory) table, showing MAC addresses, their associated VLANs, port numbers, and whether entries are dynamic or static." },
+
+{ mod:7, text:"At which OSI layer does a switch operate?",
+  opts:["Layer 1 – Physical","Layer 2 – Data Link","Layer 3 – Network","Layer 4 – Transport"],
+  ans:1, exp:"A Layer 2 switch makes forwarding decisions based on MAC addresses. A multilayer switch (Layer 3 switch) can also route based on IP addresses, combining switch and router functionality." },
+
+{ mod:7, text:"Which duplex mode allows simultaneous transmission and reception of data?",
+  opts:["Half-duplex","Full-duplex","Simplex","Auto-duplex"],
+  ans:1, exp:"Full-duplex uses separate transmit and receive pairs, allowing simultaneous bidirectional communication with no collisions. It doubles effective throughput compared to half-duplex." },
+
+{ mod:7, text:"Which switching method begins forwarding a frame immediately after reading the destination MAC?",
+  opts:["Store-and-Forward","Cut-Through","Fragment-Free","Fast-Forward"],
+  ans:1, exp:"Cut-Through switching starts forwarding after reading only the 6-byte destination MAC address (first 14 bytes of frame), providing the lowest latency. It does not check for errors before forwarding." },
+
+{ mod:7, text:"Which switching method waits for the entire frame before forwarding?",
+  opts:["Cut-Through","Fragment-Free","Store-and-Forward","Express Forwarding"],
+  ans:2, exp:"Store-and-Forward switching buffers the entire frame, performs CRC error checking, and only then forwards valid frames. It provides the highest error detection accuracy at the cost of latency." },
+
+{ mod:7, text:"What is the purpose of VLANs (Virtual Local Area Networks)?",
+  opts:["Increase switch port speeds","Logically segment a network into separate broadcast domains","Encrypt traffic between switches","Provide redundant paths between switches"],
+  ans:1, exp:"VLANs logically divide a single physical switch into multiple separate broadcast domains, improving security, performance, and network management without requiring additional physical hardware." },
+
+{ mod:7, text:"Which STP port state actively forwards frames and learns MAC addresses?",
+  opts:["Blocking","Listening","Learning","Forwarding"],
+  ans:3, exp:"Only the Forwarding state forwards data frames and learns MAC addresses. Blocking state receives BPDUs but doesn't forward frames. Learning state learns MACs but doesn't forward frames." },
+
+{ mod:7, text:"What is a broadcast storm?",
+  opts:["High-volume legitimate broadcast traffic","An uncontrolled multiplication of broadcast frames caused by a Layer 2 loop, consuming all bandwidth","A type of DDoS attack","Excessive ARP requests from a single host"],
+  ans:1, exp:"A broadcast storm occurs when broadcast frames loop endlessly in a network with a Layer 2 loop (no STP). Frames multiply exponentially, consuming all available bandwidth and crashing the network." },
+
+{ mod:7, text:"What does the Fragment-Free switching method check before forwarding a frame?",
+  opts:["Only the destination MAC (6 bytes)","The first 64 bytes of the frame","The entire frame including FCS","Only the source MAC address"],
+  ans:1, exp:"Fragment-Free (Modified Cut-Through) reads the first 64 bytes before forwarding. Since collisions produce fragments smaller than 64 bytes, this filters most collision fragments while maintaining lower latency than Store-and-Forward." },
+
+{ mod:7, text:"What is the root bridge in STP?",
+  opts:["The switch with the most ports","The switch with the lowest Bridge ID (priority + MAC address) elected as the reference point","The switch connected to the router","The switch with the highest bandwidth ports"],
+  ans:1, exp:"The root bridge is the switch with the lowest Bridge ID (8-byte value = 2-byte priority + 6-byte MAC address). All other switches calculate their paths toward the root bridge." },
+
+{ mod:7, text:"What happens to a switch port when Port Security is violated?",
+  opts:["Nothing – the port continues operating normally","Depending on the violation mode: shutdown, restrict, or protect","The VLAN is deleted","The MAC table is cleared"],
+  ans:1, exp:"Port Security violation modes: Shutdown (err-disabled, sends SNMP trap), Restrict (drops frames, increments violation counter), Protect (drops frames silently). Shutdown is the default." },
+
+{ mod:7, text:"Which command configures a switch port to access mode and assigns it to VLAN 10?",
+  opts:["switchport mode trunk","switchport access vlan 10","vlan 10 port Fa0/1","set port vlan 10"],
+  ans:1, exp:"In interface configuration mode: 'switchport mode access' sets the port as an access port (carries only one VLAN), and 'switchport access vlan 10' assigns it to VLAN 10." },
+
+{ mod:7, text:"What is a trunk port on a switch?",
+  opts:["A port connected only to end devices","A port that carries traffic for multiple VLANs between switches using 802.1Q tagging","A port used only for management access","A port configured with Port Security"],
+  ans:1, exp:"A trunk port carries traffic for multiple VLANs between switches. IEEE 802.1Q adds a 4-byte tag to frames (containing VLAN ID) so the receiving switch knows which VLAN each frame belongs to." },
+
+{ mod:7, text:"What is the difference between a managed and unmanaged switch?",
+  opts:["Managed switches are faster","Managed switches support VLANs, STP, port security, and remote management; unmanaged switches are plug-and-play with no configuration options","Unmanaged switches are more secure","Managed switches use less power"],
+  ans:1, exp:"Managed switches support features like VLANs, STP, QoS, port mirroring, SNMP monitoring, and remote CLI/web management. Unmanaged switches are plug-and-play with fixed configuration." },
+
+{ mod:7, text:"What is the purpose of the 'show interfaces' command on a Cisco switch?",
+  opts:["Display routing table","Show detailed interface statistics including errors, collisions, bandwidth, and line/protocol status","Show all MAC addresses","Display VLAN configuration"],
+  ans:1, exp:"'show interfaces' displays detailed statistics for each interface: input/output packets, errors (CRC, giants, runts), collisions, bandwidth, duplex, speed, and operational status (line protocol up/down)." },
+
+{ mod:7, text:"What does 'err-disabled' state on a switch port mean?",
+  opts:["The port is administratively shut down by the admin","The port was automatically disabled by IOS due to a violation (port security, BPDU guard, etc.)","The port has no cable connected","The port is in STP blocking state"],
+  ans:1, exp:"'err-disabled' means IOS automatically shut down the port due to a detected violation such as port security breach, BPDU Guard trigger, or loop detection. Recovery requires 'shutdown' then 'no shutdown' or errdisable recovery." },
+];
+
+let currentQ = 0, score = 0, answered = false, shuffled = [], modStats = {};
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+function startQuiz(){
+  shuffled = shuffle(QUESTIONS);
+  currentQ = 0; score = 0; modStats = {};
+  for(let i=1;i<=7;i++) modStats[i]={correct:0,total:0};
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered = false;
+  const q = shuffled[currentQ], total = shuffled.length;
+  const pct = Math.round((currentQ/total)*100);
+  document.getElementById('q-counter').textContent=`Question ${currentQ+1} / ${total}`;
+  document.getElementById('q-pct').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('live-score').textContent=score;
+  document.getElementById('q-tag').textContent=`MODULE 0${q.mod}`;
+  document.getElementById('q-num').textContent=`QUESTION ${String(currentQ+1).padStart(2,'0')} / ${total}`;
+  document.getElementById('q-text').textContent=q.text;
+  const container=document.getElementById('options-container');
+  container.innerHTML='';
+  ['A','B','C','D'].forEach((k,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML=`<span class="opt-key">${k}.</span><span>${q.opts[i]}</span>`;
+    btn.onclick=()=>selectAnswer(i,q);
+    container.appendChild(btn);
+  });
+  document.getElementById('explanation').className='explanation';
+  document.getElementById('explanation').innerHTML='';
+  document.getElementById('next-btn').className='next-btn';
+  const card=document.getElementById('q-card');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='slideIn 0.3s ease';
+}
+
+function selectAnswer(idx,q){
+  if(answered) return;
+  answered=true;
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach(b=>b.disabled=true);
+  modStats[q.mod].total++;
+  if(idx===q.ans){ btns[idx].classList.add('correct'); score++; modStats[q.mod].correct++; }
+  else { btns[idx].classList.add('wrong'); btns[q.ans].classList.add('correct'); }
+  document.getElementById('live-score').textContent=score;
+  const expEl=document.getElementById('explanation');
+  expEl.innerHTML=`<strong>💡 Explanation:</strong> ${q.exp}`;
+  expEl.classList.add('show');
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=shuffled.length) showResult(); else renderQuestion();
+}
+
+function showResult(){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  const total=shuffled.length, pct=Math.round((score/total)*100);
+  document.getElementById('final-score').textContent=score;
+  document.getElementById('result-total').textContent='/ '+total+' pts';
+  document.getElementById('s-correct').textContent=score;
+  document.getElementById('s-wrong').textContent=total-score;
+  document.getElementById('s-pct').textContent=pct+'%';
+  let title,msg;
+  if(pct>=90){title='🏆 Outstanding!';msg='Your CCNA foundations are rock solid. You are exam-ready!';}
+  else if(pct>=70){title='✅ Good Job!';msg='You have a strong grasp of most topics. Review your weaker modules!';}
+  else if(pct>=50){title='📖 Keep Studying';msg='Review the theory and practice on Packet Tracer to reinforce concepts.';}
+  else{title='💪 Keep Going!';msg='Go back and re-read each module carefully, then retry. You can do it!';}
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-msg').textContent=msg;
+  const modNames={1:'Networking Today',2:'Basic Switch Config',3:'Protocols & Models',4:'Physical Layer',5:'Number Systems',6:'Data Link Layer',7:'Ethernet Switching'};
+  const breakdown=document.getElementById('module-breakdown');
+  breakdown.innerHTML='';
+  for(let i=1;i<=7;i++){
+    const st=modStats[i]; if(st.total===0) continue;
+    const mp=Math.round((st.correct/st.total)*100);
+    const row=document.createElement('div');
+    row.className='mod-result-row';
+    row.innerHTML=`<div class="mod-name">M${i}: ${modNames[i]}</div><div class="mod-bar-wrap"><div class="mod-bar-fill" style="width:0%" data-pct="${mp}"></div></div><div class="mod-pct">${st.correct}/${st.total}</div>`;
+    breakdown.appendChild(row);
+  }
+  setTimeout(()=>{ document.querySelectorAll('.mod-bar-fill').forEach(el=>{ el.style.width=el.dataset.pct+'%'; }); },100);
+}
+
+function retryQuiz(){
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('start-screen').style.display='block';
+}
+</script>
+</body>
+</html>
